@@ -1,26 +1,295 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ----------------------------------------------------------------------------
+   Breinsport — Brand design tokens
+   Palette sourced 1:1 from the Breinrock corporate identity guidelines.
+---------------------------------------------------------------------------- */
+@theme {
+  /* Brand colors */
+  --color-midnight: #0a2136; /* midnight frame — primary surface */
+  --color-midnight-deep: #061523; /* derived deeper shade for gradients/footer */
+  --color-breinrock: #084070; /* breinrock blue — primary brand */
+  --color-breinrock-bright: #0a5494; /* derived hover/accent */
+  --color-action: #1664c4; /* action blue — CTA */
+  --color-action-bright: #2b7be2; /* derived CTA hover/focus */
+  --color-bluegray: #36454f; /* blue gray — muted */
+  --color-steel: #d9dfe5; /* steel neutral — light surfaces/borders */
+  --color-arctic: #f5f7fa; /* arctic white — primary text on dark */
+
+  /* Typography — Montserrat for UI, Georgia serif for the brand wordmark/display */
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", Times, serif;
+
+  /* Motion */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Animations */
+  --animate-twinkle: twinkle 6s ease-in-out infinite;
+  --animate-drift: drift 28s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.8s var(--ease-brand) infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes network-arc-flow {
+  from {
+    stroke-dashoffset: 32;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes network-arc-draw {
+  from {
+    stroke-dashoffset: 600;
+    stroke-opacity: 0.85;
+  }
+  to {
+    stroke-dashoffset: 0;
+    stroke-opacity: 0;
+  }
+}
+
+@keyframes network-hub-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes network-node-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes network-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 0.72;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Base
+---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem; /* clears the sticky header on anchor jumps */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-midnight);
+    color: var(--color-arctic);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-action);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-action-bright);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* Tabular figures for stats so numbers don't jitter */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Utilities & composed classes
+---------------------------------------------------------------------------- */
+@layer components {
+  .wordmark {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+  }
+
+  .display {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Hairline gradient divider used between sections */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-steel) 28%, transparent),
+      transparent
+    );
+  }
+
+  /* Faint engineering grid + radial vignette used behind dark sections */
+  .grid-veil {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-steel) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-steel) 6%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 60% at 50% 40%,
+      #000 30%,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse 80% 60% at 50% 40%,
+      #000 30%,
+      transparent 78%
+    );
+  }
+
+  /* Animated world network map (Network section) */
+  .network-dot {
+    animation: twinkle 5s ease-in-out infinite;
+  }
+
+  .network-hub-glow {
+    transform-origin: center;
+    animation: network-hub-breathe 8s ease-in-out infinite;
+  }
+
+  svg[data-active="true"] .network-arc {
+    animation: network-arc-flow 2.4s linear infinite;
+  }
+
+  svg[data-active="true"] .network-arc-draw {
+    stroke-dasharray: 600;
+    animation: network-arc-draw 1.6s var(--ease-brand) forwards;
+  }
+
+  svg[data-active="true"] .network-pulse-ring {
+    animation: pulse-ring 3.2s var(--ease-brand) infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  svg[data-active="true"] .network-node {
+    animation: network-node-in 0.7s var(--ease-brand) forwards;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  svg[data-active="true"] .network-label {
+    animation: network-label-in 0.8s var(--ease-brand) forwards;
+  }
+
+  svg[data-active="true"] .network-packet {
+    opacity: 0.85;
+  }
+
+  svg[data-active="false"] .network-packet {
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Scroll reveal (driven by IntersectionObserver in <Reveal/>)
+---------------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--ease-brand),
+    transform 0.8s var(--ease-brand);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
