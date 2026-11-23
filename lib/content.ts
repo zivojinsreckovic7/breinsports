@@ -174,7 +174,7 @@ export const offices = [
   {
     city: "Prague",
     country: "Czech Republic",
-    address: "Evropská 2758/11, Dejvice, 160 00 Prague 6",
+    address: "Lazarská 1718/3, Nové Město, 110 00 Prague 1",
     phone: "+357 25 025025",
     hq: false,
     lat: 50.1,
